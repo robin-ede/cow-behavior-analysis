@@ -18,23 +18,24 @@ This repository implements an end-to-end system for:
 
 ```
 cow-sam/
+├── 0_setup.ipynb                # Step 0: Automated dataset setup (START HERE!)
 ├── 01_bbox_crops.ipynb           # Step 1: Extract crops from VIA annotations
 ├── 02_yolo_oneclass_from_via.ipynb  # Step 2: Train YOLO cow detector
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
 ├── 06_cow_detection_and_behavior_pipeline.ipynb # Step 4: End-to-end pipeline
-├── CODE_SPEC.md                  # Development guidelines and style specification
+├── README.md                     # This file
 ├── data/
 │   ├── CBVD-5.csv               # VIA annotation file (25K+ annotations)
-│   ├── labelframes/             # Video frame images
-│   └── videos/                  # Raw video files
+│   ├── labelframes/             # Video frame images (download required)
+│   └── videos/                  # Raw video files (download required)
 ├── models/
-│   └── cow-behavior-vit/        # Trained ViT classifier
+│   └── cow-behavior-vit/        # Trained ViT classifier (included)
 ├── workdir/
-│   ├── crops_raw/               # Extracted behavior crops by class
-│   └── yolo_cow_oneclass/       # YOLO training dataset
-├── runs/                        # Training outputs and model weights
-├── yolo11n.pt                   # Pre-trained YOLO weights
-└── yolov8n.pt                   # Pre-trained YOLO weights
+│   ├── crops_raw/               # Extracted behavior crops by class (generated)
+│   └── yolo_cow_oneclass/       # YOLO training dataset (generated)
+├── runs/                        # Training outputs and model weights (generated)
+├── yolo11n.pt                   # Pre-trained YOLO weights (download required)
+└── yolov8n.pt                   # Pre-trained YOLO weights (download required)
 ```
 
 ## 📊 Dataset Information
@@ -53,7 +54,25 @@ cow-sam/
 
 ### 🚨 Dataset Setup Required
 
-**Important**: The large dataset files (~10GB) are excluded from this repository via `.gitignore`. To use this code, you'll need to:
+**Important**: The large dataset files (~6GB) are excluded from this repository via `.gitignore`. 
+
+#### 🚀 **Quick Setup (Recommended)**
+
+Run the automated setup notebook that downloads everything for you:
+
+**`0_setup.ipynb`** - Automated dataset download and setup
+
+This notebook will:
+- ✅ Download the CBVD-5 dataset from Kaggle (~6GB)
+- ✅ Extract and organize files into the correct structure  
+- ✅ Download YOLO pre-trained weights
+- ✅ Verify everything is set up correctly
+
+**Prerequisites**: You'll need a [Kaggle account](https://www.kaggle.com) and API credentials (`kaggle.json`).
+
+#### 📋 **Manual Setup (Alternative)**
+
+If you prefer manual setup:
 
 1. **Download the CBVD-5 dataset** from [Kaggle](https://www.kaggle.com/datasets/fandaoerji/cbvd-5cow-behavior-video-dataset/data)
 2. **Extract the files** to match this structure:
@@ -86,6 +105,21 @@ pip install torch transformers datasets evaluate
 ```
 
 ### Step-by-Step Execution
+
+#### 0. `0_setup.ipynb` - Dataset Setup (START HERE!)
+**Purpose**: Automated download and setup of the CBVD-5 dataset and YOLO weights.
+
+**What it does**:
+- Downloads CBVD-5 dataset from Kaggle using the Kaggle API
+- Extracts and organizes files into correct project structure  
+- Downloads YOLO pre-trained weights
+- Verifies setup completion
+
+**Requirements**: Kaggle account and API credentials (`kaggle.json`)
+
+**Runtime**: ~10-20 minutes (depending on internet speed)
+
+---
 
 #### 1. `01_bbox_crops.ipynb` - Extract Behavior Crops
 **Purpose**: Process VIA annotations to create padded bounding box crops organized by behavior class.
