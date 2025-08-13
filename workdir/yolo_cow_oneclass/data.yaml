@@ -1,0 +1,7 @@
+path: /home/robin/code/cow-sam/workdir/yolo_cow_oneclass
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: cow
+nc: 1
