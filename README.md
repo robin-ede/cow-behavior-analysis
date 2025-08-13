@@ -18,7 +18,6 @@ This repository implements an end-to-end system for:
 
 ```
 cow-sam/
-├── 0_setup.ipynb                # Step 0: Automated dataset setup (START HERE!)
 ├── 01_bbox_crops.ipynb           # Step 1: Extract crops from VIA annotations
 ├── 02_yolo_oneclass_from_via.ipynb  # Step 2: Train YOLO cow detector
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
@@ -26,8 +25,10 @@ cow-sam/
 ├── README.md                     # This file
 ├── data/
 │   ├── CBVD-5.csv               # VIA annotation file (25K+ annotations)
-│   ├── labelframes/             # Video frame images (download required)
-│   └── videos/                  # Raw video files (download required)
+│   ├── labelframes/
+│   │   └── labelframes/         # Video frame images (download required)
+│   └── videos/
+│       └── videos/              # Raw video files (download required)
 ├── models/
 │   └── cow-behavior-vit/        # Trained ViT classifier (included)
 ├── workdir/
@@ -56,31 +57,28 @@ cow-sam/
 
 **Important**: The large dataset files (~6GB) are excluded from this repository via `.gitignore`. 
 
-#### 🚀 **Quick Setup (Recommended)**
-
-Run the automated setup notebook that downloads everything for you:
-
-**`0_setup.ipynb`** - Automated dataset download and setup
-
-This notebook will:
-- ✅ Download the CBVD-5 dataset from Kaggle (~6GB)
-- ✅ Extract and organize files into the correct structure  
-- ✅ Verify everything is set up correctly
-
-**Prerequisites**: You'll need a [Kaggle account](https://www.kaggle.com) and API credentials (`kaggle.json`).
-
-#### 📋 **Manual Setup (Alternative)**
-
-If you prefer manual setup:
+#### 📋 **Manual Setup Required**
 
 1. **Download the CBVD-5 dataset** from [Kaggle](https://www.kaggle.com/datasets/fandaoerji/cbvd-5cow-behavior-video-dataset/data)
-2. **Extract the files** to match this structure:
+2. **Extract the directories** from the downloaded zip file and place them in your `data/` folder:
+   - Extract the entire `videos/` directory → place in `data/` (preserving nested structure)
+   - Extract the entire `labelframes/` directory → place in `data/` (preserving nested structure)
+   
+   **Correct structure after extraction:**
    ```
    cow-sam/
    ├── data/
    │   ├── CBVD-5.csv          # ✅ Included (small metadata file)
-   │   ├── videos/             # ❌ Download required (~3.3GB, 687 videos)
-   │   └── labelframes/        # ❌ Download required (~2.7GB, 4,122 images)
+   │   ├── videos/
+   │   │   └── videos/         # ✅ Nested structure from dataset
+   │   │       ├── video1.mp4
+   │   │       ├── video2.mp4
+   │   │       └── ...         # (~3.3GB, 687 total videos)
+   │   └── labelframes/
+   │       └── labelframes/    # ✅ Nested structure from dataset
+   │           ├── image1.jpg
+   │           ├── subfolder/
+   │           └── ...         # (~2.7GB, 4,122 total images)
    └── yolo*.pt                # ❌ Download YOLO weights separately
    ```
 
@@ -98,21 +96,7 @@ pip install torch transformers datasets evaluate
 
 ### Step-by-Step Execution
 
-#### 0. `0_setup.ipynb` - Dataset Setup (START HERE!)
-**Purpose**: Automated download and setup of the CBVD-5 dataset.
-
-**What it does**:
-- Downloads CBVD-5 dataset from Kaggle using the Kaggle API
-- Extracts and organizes files into correct project structure  
-- Verifies setup completion
-
-**Requirements**: Kaggle account and API credentials (`kaggle.json`)
-
-**Runtime**: ~10-20 minutes (depending on internet speed)
-
----
-
-#### 1. `01_bbox_crops.ipynb` - Extract Behavior Crops
+#### 1. `01_bbox_crops.ipynb` - Extract Behavior Crops (START HERE!)
 **Purpose**: Process VIA annotations to create padded bounding box crops organized by behavior class.
 
 **Key Features**:
