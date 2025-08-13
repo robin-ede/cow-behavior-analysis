@@ -65,7 +65,6 @@ Run the automated setup notebook that downloads everything for you:
 This notebook will:
 - ✅ Download the CBVD-5 dataset from Kaggle (~6GB)
 - ✅ Extract and organize files into the correct structure  
-- ✅ Download YOLO pre-trained weights
 - ✅ Verify everything is set up correctly
 
 **Prerequisites**: You'll need a [Kaggle account](https://www.kaggle.com) and API credentials (`kaggle.json`).
@@ -85,14 +84,7 @@ If you prefer manual setup:
    └── yolo*.pt                # ❌ Download YOLO weights separately
    ```
 
-3. **Download YOLO pre-trained weights**:
-   ```bash
-   # YOLOv8 nano
-   wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
-   
-   # YOLO11 nano (if using newer version)
-   wget https://github.com/ultralytics/assets/releases/download/v8.2.0/yolo11n.pt
-   ```
+3. **YOLO pre-trained weights** will be downloaded automatically when running the training notebooks.
 
 The trained models in `models/` directory are included as they're much smaller and represent the key research outputs.
 
@@ -107,12 +99,11 @@ pip install torch transformers datasets evaluate
 ### Step-by-Step Execution
 
 #### 0. `0_setup.ipynb` - Dataset Setup (START HERE!)
-**Purpose**: Automated download and setup of the CBVD-5 dataset and YOLO weights.
+**Purpose**: Automated download and setup of the CBVD-5 dataset.
 
 **What it does**:
 - Downloads CBVD-5 dataset from Kaggle using the Kaggle API
 - Extracts and organizes files into correct project structure  
-- Downloads YOLO pre-trained weights
 - Verifies setup completion
 
 **Requirements**: Kaggle account and API credentials (`kaggle.json`)
