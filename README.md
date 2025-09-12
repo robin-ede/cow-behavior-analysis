@@ -1,5 +1,7 @@
 # Cow Behavior Analysis with YOLO + Vision Transformer
 
+**GitHub Repository**: https://github.com/robin-ede/cow-behavior-analysis
+
 A complete machine learning pipeline for automated cow behavior classification using computer vision. This project combines YOLO object detection with Vision Transformer (ViT) classification to analyze cow behaviors in video footage.
 
 ## 📋 Project Overview
