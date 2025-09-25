@@ -1,0 +1,33 @@
+# Clip Maker Configuration
+# Parameters for extracting temporal clips from tracking data
+
+# Temporal parameters
+T: 16                    # Number of frames per clip
+STRIDE: 2               # Temporal stride between frames
+MAX_GAP: 5              # Maximum frame gap allowed in sequence
+
+# Spatial parameters
+PAD: 0.08               # Padding around bbox (8%)
+OUT_SIZE: 224           # Output crop size (224x224 for X3D)
+
+# Video processing
+BATCH_SIZE: 32          # Number of clips to process in batch
+MIN_TRACK_LENGTH: 16    # Minimum track length to extract clips
+
+# Output format
+SAVE_FORMAT: "npy"      # Save format: "npy" or "mp4"
+QUALITY: "high"         # Quality: "high", "medium", "low"
+
+# Behavior labels (from VIA annotations)
+BEHAVIORS:
+  - "stand"
+  - "lying_down"
+  - "foraging"
+  - "drinking_water"
+  - "rumination"
+
+# Data splitting
+SPLIT_RATIOS:
+  train: 0.7
+  val: 0.15
+  test: 0.15
