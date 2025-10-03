@@ -1,4 +1,4 @@
-path: /home/robin/code/cow-sam/workdir/yolo_cow_oneclass
+path: /Users/robin/Code/cow-behavior-analysis/workdir/yolo_cow_oneclass
 train: images/train
 val: images/val
 test: images/test
