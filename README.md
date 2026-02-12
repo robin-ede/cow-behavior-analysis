@@ -24,15 +24,18 @@ cow-sam/
 ├── 02_yolo_oneclass_from_via.ipynb  # Step 2: Train YOLO cow detector
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
 ├── 06_cow_detection_and_behavior_pipeline.ipynb # Step 4: End-to-end pipeline
+├── 06a_botsort_pipeline.ipynb    # Step 4a: Pipeline with tracking
 ├── README.md                     # This file
-├── DATASET.md                    # Dataset provenance and notes
-├── data/
+├── AGENTS.md                     # Agent operating guide for this repository
+├── dataset.md                    # Dataset provenance and notes
+├── requirements.txt              # Python package dependencies
+├── data/                         # Dataset files (gitignored, download required)
 │   ├── CBVD-5.csv               # VIA annotation file (25K+ annotations)
 │   ├── labelframes/
 │   │   └── labelframes/         # Video frame images (download required)
 │   └── videos/
 │       └── videos/              # Raw video files (download required)
-├── artifacts/
+├── artifacts/                    # Generated outputs (gitignored)
 │   ├── models/
 │   │   └── cow-behavior-vit/    # Trained ViT classifier (generated)
 │   ├── runs/
@@ -43,12 +46,12 @@ cow-sam/
 │   │   └── vit_classifier/      # Evaluation figures (generated)
 │   ├── pipeline/                # Pipeline demo outputs (generated)
 │   └── pipeline_tracking/       # Tracking demo outputs (generated)
-├── workdir/
-│   ├── crops_raw/               # Extracted behavior crops by class (generated)
-│   └── yolo_cow_oneclass/       # YOLO training dataset (generated)
-├── yolo11n.pt                   # Pre-trained YOLO weights (download required)
-└── yolov8n.pt                   # Pre-trained YOLO weights (download required)
+└── workdir/                      # Intermediate data (gitignored)
+    ├── crops_raw/               # Extracted behavior crops by class (generated)
+    └── yolo_cow_oneclass/       # YOLO training dataset (generated)
 ```
+
+**Note**: YOLO pre-trained weights (e.g., `yolo11n.pt`) are automatically downloaded during training.
 
 ## Dataset Information
 
@@ -90,20 +93,41 @@ cow-sam/
    │           ├── image1.jpg
    │           ├── subfolder/
    │           └── ...         # (~2.7GB, 4,122 total images)
-   └── yolo*.pt                # Download YOLO weights separately
    ```
 
-3. **YOLO pre-trained weights** will be downloaded automatically when running the training notebooks.
+3. **YOLO pre-trained weights** will be downloaded automatically when running the training notebooks (e.g., `yolo11n.pt` for YOLO11 nano model).
 
 Training outputs and models are written to `artifacts/`.
 
 ## Notebook Execution Order
 
 ### Prerequisites
+
+#### Environment Setup
 ```bash
-pip install ultralytics opencv-python numpy matplotlib scikit-learn pandas tqdm
-pip install torch transformers datasets evaluate
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
+
+Or using `uv` for faster installation:
+```bash
+pip install uv
+uv pip install -r requirements.txt
+```
+
+#### Key Dependencies
+- **Core ML**: `torch`, `transformers`, `accelerate`
+- **YOLO & CV**: `ultralytics`, `opencv-python`
+- **Data Processing**: `numpy`, `pandas`, `pillow`
+- **ML Utilities**: `datasets`, `evaluate`, `scikit-learn`
+- **Visualization**: `matplotlib`
+- **Utilities**: `tqdm`, `pyyaml`
+
+See `requirements.txt` for complete list with version constraints.
 
 ### Step-by-Step Execution
 
@@ -138,6 +162,8 @@ pip install torch transformers datasets evaluate
 - Video ID extraction from filenames for proper splitting
 
 **Output**: Trained YOLO model at `artifacts/runs/detect/yolo_oneclass/weights/best.pt`
+
+**Note**: Uses YOLO11 nano model (`yolo11n.pt`) which is automatically downloaded on first run.
 
 **Performance**: Successfully detects cows across validation set
 
