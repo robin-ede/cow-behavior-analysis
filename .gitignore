@@ -1,12 +1,16 @@
 # Dataset files - large video and image data
+data/
 data/videos/
 data/labelframes/
 
 # Generated/processed data
+workdir/
 workdir/crops_raw/
 workdir/yolo_cow_oneclass/images/
 workdir/yolo_cow_oneclass/labels/
 output_videos/
+output_img/
+artifacts/
 
 # Training artifacts and runs
 runs/
@@ -14,6 +18,13 @@ runs/
 # Pre-trained model weights (download separately)
 *.pt
 !models/*.pt  # Keep custom trained models
+models/cow-behavior-vit/
+
+# Generated root-level figures
+combined_results_figure.png
+confusion_matrix_loaded_model.png
+precision_recall_by_behavior.png
+sample_predictions_square.png
 
 # Python
 __pycache__/
@@ -52,6 +63,13 @@ venv.bak/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Notebook mirrors (generated from .ipynb)
+01_bbox_crops.py
+02_yolo_oneclass_from_via.py
+05_vit_behavior_classifier.py
+06_cow_detection_and_behavior_pipeline.py
+06a_botsort_pipeline.py
+
 # PyTorch
 *.pth
 *.pkl
@@ -62,6 +80,7 @@ venv.bak/
 *.swp
 *.swo
 .claude/
+.opencode/
 
 # OS generated files
 .DS_Store
