@@ -4,7 +4,7 @@
 
 A complete machine learning pipeline for automated cow behavior classification using computer vision. This project combines YOLO object detection with Vision Transformer (ViT) classification to analyze cow behaviors in video footage.
 
-## 📋 Project Overview
+## Project Overview
 
 This repository implements an end-to-end system for:
 - **Cow Detection**: Using YOLOv8 to detect and localize cows in video frames
@@ -16,7 +16,7 @@ This repository implements an end-to-end system for:
 - **Classification**: 92.6% accuracy on 5-class behavior classification
 - **Pipeline**: Real-time video processing with frame-by-frame analysis
 
-## 🗂️ Repository Structure
+## Repository Structure
 
 ```
 cow-sam/
@@ -25,23 +25,32 @@ cow-sam/
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
 ├── 06_cow_detection_and_behavior_pipeline.ipynb # Step 4: End-to-end pipeline
 ├── README.md                     # This file
+├── DATASET.md                    # Dataset provenance and notes
 ├── data/
 │   ├── CBVD-5.csv               # VIA annotation file (25K+ annotations)
 │   ├── labelframes/
 │   │   └── labelframes/         # Video frame images (download required)
 │   └── videos/
 │       └── videos/              # Raw video files (download required)
-├── models/
-│   └── cow-behavior-vit/        # Trained ViT classifier (included)
+├── artifacts/
+│   ├── models/
+│   │   └── cow-behavior-vit/    # Trained ViT classifier (generated)
+│   ├── runs/
+│   │   ├── cow-behavior-vit/    # ViT training outputs (generated)
+│   │   └── detect/
+│   │       └── yolo_oneclass/   # YOLO training outputs (generated)
+│   ├── figures/
+│   │   └── vit_classifier/      # Evaluation figures (generated)
+│   ├── pipeline/                # Pipeline demo outputs (generated)
+│   └── pipeline_tracking/       # Tracking demo outputs (generated)
 ├── workdir/
 │   ├── crops_raw/               # Extracted behavior crops by class (generated)
 │   └── yolo_cow_oneclass/       # YOLO training dataset (generated)
-├── runs/                        # Training outputs and model weights (generated)
 ├── yolo11n.pt                   # Pre-trained YOLO weights (download required)
 └── yolov8n.pt                   # Pre-trained YOLO weights (download required)
 ```
 
-## 📊 Dataset Information
+## Dataset Information
 
 **CBVD-5 Dataset** (from [Kaggle](https://www.kaggle.com/datasets/fandaoerji/cbvd-5cow-behavior-video-dataset/data)):
 - **Total Annotations**: 25,324 bounding box annotations
@@ -55,40 +64,40 @@ cow-sam/
 
 **Annotation Format**: VIA (VGG Image Annotator) CSV format with spatial coordinates and behavior metadata.
 
-### 🚨 Dataset Setup Required
+### Dataset Setup Required
 
 **Important**: The large dataset files (~6GB) are excluded from this repository via `.gitignore`. 
 
-#### 📋 **Manual Setup Required**
+#### Manual Setup Required
 
 1. **Download the CBVD-5 dataset** from [Kaggle](https://www.kaggle.com/datasets/fandaoerji/cbvd-5cow-behavior-video-dataset/data)
 2. **Extract the directories** from the downloaded zip file and place them in your `data/` folder:
-   - Extract the entire `videos/` directory → place in `data/` (preserving nested structure)
-   - Extract the entire `labelframes/` directory → place in `data/` (preserving nested structure)
+   - Extract the entire `videos/` directory and place it in `data/` (preserving nested structure)
+   - Extract the entire `labelframes/` directory and place it in `data/` (preserving nested structure)
    
    **Correct structure after extraction:**
    ```
    cow-sam/
    ├── data/
-   │   ├── CBVD-5.csv          # ✅ Included (small metadata file)
+   │   ├── CBVD-5.csv          # Included (small metadata file)
    │   ├── videos/
-   │   │   └── videos/         # ✅ Nested structure from dataset
+   │   │   └── videos/         # Nested structure from dataset
    │   │       ├── video1.mp4
    │   │       ├── video2.mp4
    │   │       └── ...         # (~3.3GB, 687 total videos)
    │   └── labelframes/
-   │       └── labelframes/    # ✅ Nested structure from dataset
+   │       └── labelframes/    # Nested structure from dataset
    │           ├── image1.jpg
    │           ├── subfolder/
    │           └── ...         # (~2.7GB, 4,122 total images)
-   └── yolo*.pt                # ❌ Download YOLO weights separately
+   └── yolo*.pt                # Download YOLO weights separately
    ```
 
 3. **YOLO pre-trained weights** will be downloaded automatically when running the training notebooks.
 
-The trained models in `models/` directory are included as they're much smaller and represent the key research outputs.
+Training outputs and models are written to `artifacts/`.
 
-## 🚀 Notebook Execution Order
+## Notebook Execution Order
 
 ### Prerequisites
 ```bash
@@ -128,7 +137,7 @@ pip install torch transformers datasets evaluate
 - Mixed precision training (bf16/fp16)
 - Video ID extraction from filenames for proper splitting
 
-**Output**: Trained YOLO model at `runs/detect/train*/weights/best.pt`
+**Output**: Trained YOLO model at `artifacts/runs/detect/yolo_oneclass/weights/best.pt`
 
 **Performance**: Successfully detects cows across validation set
 
@@ -154,7 +163,7 @@ pip install torch transformers datasets evaluate
 - **Weighted F1-Score**: 92.57%
 - **Training Time**: ~30 minutes on RTX 4080
 
-**Output**: Production-ready model saved to `models/cow-behavior-vit/`
+**Output**: Production-ready model saved to `artifacts/models/cow-behavior-vit/`
 
 ---
 
@@ -178,12 +187,12 @@ pip install torch transformers datasets evaluate
 - Video processing with annotated output
 - Sample validation on test images
 
-## 🎯 Design Choices & Rationale
+## Design Choices and Rationale
 
 ### 1. Video-Based Data Splitting
 **Choice**: Split data by video ID rather than randomly
 **Rationale**: Prevents data leakage since consecutive frames are highly correlated
-**Implementation**: Extract video ID from filename pattern (e.g., `618_00002.jpg` → video `618`)
+**Implementation**: Extract video ID from filename pattern (e.g., `618_00002.jpg` to video `618`)
 
 ### 2. Behavior Priority Mapping
 **Choice**: Hierarchical behavior assignment when multiple behaviors are present
@@ -204,7 +213,7 @@ pip install torch transformers datasets evaluate
 **Classification**: Uses ViT's standard preprocessing (resize, normalize) without additional augmentation
 **Rationale**: Large dataset size (25K+ samples) reduces need for aggressive augmentation
 
-## 🔧 Future Improvements
+## Future Improvements
 
 ### Short-term Enhancements
 1. **Temporal Modeling**: Incorporate sequence information for behavior classification
@@ -225,7 +234,7 @@ pip install torch transformers datasets evaluate
 3. **Federated Learning**: Train across multiple farms while preserving privacy
 4. **Mobile Deployment**: Develop smartphone/edge device applications
 
-## 📈 Technical Performance
+## Technical Performance
 
 ### YOLO Detection Model
 - **Architecture**: YOLOv8 nano
