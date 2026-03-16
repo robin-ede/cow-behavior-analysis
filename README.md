@@ -7,19 +7,19 @@ A complete machine learning pipeline for automated cow behavior classification u
 ## Project Overview
 
 This repository implements an end-to-end system for:
-- **Cow Detection**: Using YOLOv8 to detect and localize cows in video frames
+- **Cow Detection**: Using YOLOv11 to detect and localize cows in video frames
 - **Behavior Classification**: Using fine-tuned Vision Transformer to classify 5 cow behaviors
 - **Pipeline Integration**: Complete workflow from raw video to annotated behavior analysis
 
 ### Key Results
-- **Detection**: YOLOv8 nano model trained on 25K+ cow bounding boxes
+- **Detection**: YOLOv11 nano model trained on 25K+ cow bounding boxes
 - **Classification**: 92.66% accuracy on 5-class behavior classification
 - **Pipeline**: Real-time video processing with frame-by-frame analysis
 
 ## Repository Structure
 
 ```
-cow-sam/
+cow-behavior-analysis/
 ├── 01_bbox_crops.ipynb           # Step 1: Extract crops from VIA annotations
 ├── 02_yolo_oneclass_from_via.ipynb  # Step 2: Train YOLO cow detector
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
@@ -27,7 +27,7 @@ cow-sam/
 ├── 06a_botsort_pipeline.ipynb    # Step 4a: Pipeline with tracking
 ├── README.md                     # This file
 ├── AGENTS.md                     # Agent operating guide for this repository
-├── dataset.md                    # Dataset provenance and notes
+├── DATASET.md                    # Dataset provenance and notes
 ├── requirements.txt              # Python package dependencies
 ├── data/                         # Dataset files (gitignored, download required)
 │   ├── CBVD-5.csv               # VIA annotation file (25K+ annotations)
@@ -80,7 +80,7 @@ cow-sam/
    
    **Correct structure after extraction:**
    ```
-   cow-sam/
+    cow-behavior-analysis/
    ├── data/
    │   ├── CBVD-5.csv          # Included (small metadata file)
    │   ├── videos/
@@ -147,11 +147,11 @@ See `requirements.txt` for complete list with version constraints.
 ---
 
 #### 2. `02_yolo_oneclass_from_via.ipynb` - Train YOLO Detector
-**Purpose**: Train YOLOv8 nano model for single-class cow detection using video-based data splitting.
+**Purpose**: Train YOLOv11 nano model for single-class cow detection using video-based data splitting.
 
 **Key Design Choices**:
 - **Video-based splitting** (70/20/10 train/val/test) to prevent data leakage
-- **YOLOv8 nano** for speed/accuracy balance
+- **YOLOv11 nano** for speed/accuracy balance
 - **Single class**: All cows treated as one class for detection
 - **Data augmentation**: Built into YOLO training pipeline
 
@@ -226,7 +226,7 @@ See `requirements.txt` for complete list with version constraints.
 **Rationale**: More specific/rare behaviors take precedence over common ones
 
 ### 3. Model Selection
-**YOLO Choice**: YOLOv8 nano for detection
+**YOLO Choice**: YOLOv11 nano for detection
 - **Pros**: Fast inference, good accuracy, single-shot detection
 - **Trade-off**: Nano model for speed vs. accuracy balance
 
