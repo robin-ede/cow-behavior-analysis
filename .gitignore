@@ -20,12 +20,6 @@ runs/
 !models/*.pt  # Keep custom trained models
 models/cow-behavior-vit/
 
-# Generated root-level figures
-combined_results_figure.png
-confusion_matrix_loaded_model.png
-precision_recall_by_behavior.png
-sample_predictions_square.png
-
 # Python
 __pycache__/
 *.py[cod]
@@ -69,6 +63,7 @@ venv.bak/
 05_vit_behavior_classifier.py
 06_cow_detection_and_behavior_pipeline.py
 06a_botsort_pipeline.py
+*.py
 
 # PyTorch
 *.pth

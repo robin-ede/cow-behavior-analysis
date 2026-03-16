@@ -13,7 +13,7 @@ This repository implements an end-to-end system for:
 
 ### Key Results
 - **Detection**: YOLOv8 nano model trained on 25K+ cow bounding boxes
-- **Classification**: 92.6% accuracy on 5-class behavior classification
+- **Classification**: 92.66% accuracy on 5-class behavior classification
 - **Pipeline**: Real-time video processing with frame-by-frame analysis
 
 ## Repository Structure
@@ -185,8 +185,8 @@ See `requirements.txt` for complete list with version constraints.
 - **Optimization**: AdamW with warmup and weight decay
 
 **Key Results**:
-- **Test Accuracy**: 92.6%
-- **Weighted F1-Score**: 92.57%
+- **Test Accuracy**: 92.66%
+- **Weighted F1-Score**: 92.63%
 - **Training Time**: ~30 minutes on RTX 4080
 
 **Output**: Production-ready model saved to `artifacts/models/cow-behavior-vit/`
@@ -263,10 +263,14 @@ See `requirements.txt` for complete list with version constraints.
 ## Technical Performance
 
 ### YOLO Detection Model
-- **Architecture**: YOLOv8 nano
+- **Architecture**: YOLO11 nano
 - **Training**: 30 epochs with early stopping
 - **Dataset**: 3,199 annotated images (video-based split)
-- **Performance**: Reliable cow detection across diverse conditions
+- **Performance**:
+  - Precision: 86.2%
+  - Recall: 85.5%
+  - mAP@50: 90.8%
+  - mAP@50-95: 50.0%
 
 ### ViT Classification Model
 - **Architecture**: ViT-base-patch16-224 (86M parameters)
@@ -274,13 +278,13 @@ See `requirements.txt` for complete list with version constraints.
 - **Dataset**: 25,324 behavior crops (stratified split)
 - **Results**:
   ```
-  Test Accuracy: 92.6%
-  Weighted F1-Score: 92.57%
+  Test Accuracy: 92.66%
+  Weighted F1-Score: 92.63%
   
   Per-class Performance:
-  - drinking water: 95% precision, 89% recall
-  - foraging: 91% precision, 94% recall  
-  - lying down: 94% precision, 91% recall
-  - rumination: 93% precision, 92% recall
-  - stand: 92% precision, 95% recall
+  - drinking water: precision 0.94, recall 0.93, F1 0.93
+  - foraging:       precision 0.95, recall 0.97, F1 0.96
+  - lying down:     precision 0.90, recall 0.86, F1 0.88
+  - rumination:     precision 0.89, recall 0.90, F1 0.89
+  - stand:          precision 0.96, recall 0.96, F1 0.96
   ```

@@ -2,7 +2,8 @@
 
 ## Purpose
 Agent operating guide for this repository.
-The project is notebook-first, with `.py` mirrors used for fast editing.
+`.py` files are the primary editing targets; `.ipynb` files are synced from them via jupytext after changes are confirmed working.
+All Python-dependent commands must be run via `uv run` to ensure the correct environment is used.
 
 ## Project Layout
 - `01_bbox_crops.*`: crop extraction from VIA CSV
@@ -34,65 +35,40 @@ pip install pytest ruff black mypy
 
 ## Build and Run Commands
 No package build system exists (no `pyproject.toml`, no Makefile).
-Run workflow stages directly:
+Run workflow stages directly (always via `uv run`):
 ```bash
-python3 01_bbox_crops.py
-python3 02_yolo_oneclass_from_via.py
-python3 05_vit_behavior_classifier.py
-python3 06_cow_detection_and_behavior_pipeline.py
-python3 06a_botsort_pipeline.py
+uv run python 01_bbox_crops.py
+uv run python 02_yolo_oneclass_from_via.py
+uv run python 05_vit_behavior_classifier.py
+uv run python 06_cow_detection_and_behavior_pipeline.py
+uv run python 06a_botsort_pipeline.py
 ```
 
 Notebook usage:
 ```bash
-jupyter notebook
+uv run jupyter notebook
 ```
 
 Headless notebook smoke run:
 ```bash
-jupyter nbconvert --to notebook --execute 01_bbox_crops.ipynb --output /tmp/01_bbox_crops.executed.ipynb
+uv run jupyter nbconvert --to notebook --execute 01_bbox_crops.ipynb --output /tmp/01_bbox_crops.executed.ipynb
 ```
 
 ## Lint and Format
 Use conservative defaults:
 ```bash
-ruff check .
-black --check .
+uv run ruff check .
+uv run black --check .
 ```
 
 Format only touched files when needed:
 ```bash
-black 01_bbox_crops.py 02_yolo_oneclass_from_via.py
+uv run black 01_bbox_crops.py 02_yolo_oneclass_from_via.py
 ```
 
 ## Test Commands
 There is no committed `tests/` suite yet.
 Use these commands once tests exist:
-
-Run full suite:
-```bash
-pytest -q
-```
-
-Run a single test file:
-```bash
-pytest -q tests/test_pipeline.py
-```
-
-Run one test function (preferred for iteration):
-```bash
-pytest -q tests/test_pipeline.py::test_process_image
-```
-
-Run by keyword:
-```bash
-pytest -q -k "botsort and not slow"
-```
-
-Fallback smoke check if no pytest tests:
-```bash
-jupyter nbconvert --to notebook --execute 06_cow_detection_and_behavior_pipeline.ipynb --output /tmp/pipeline.smoke.ipynb
-```
 
 ## Code Style Guidelines
 
@@ -137,10 +113,18 @@ jupyter nbconvert --to notebook --execute 06_cow_detection_and_behavior_pipeline
 - Keep thresholds/frame limits as named constants.
 
 ## Notebook and Mirror Rules
-- Treat `.py` files as notebook mirrors, not CLI applications.
+- **Always edit `.py` files**, never `.ipynb` files directly.
+- Treat `.py` files as the source of truth; `.ipynb` files are derived outputs.
 - Do not add argparse/CLI wrappers unless explicitly requested.
 - Keep mirror code order aligned with notebook execution order.
-- If logic changes in a mirror, sync the corresponding notebook structure.
+- Once changes in a `.py` file are confirmed working, sync to the corresponding notebook using jupytext:
+  ```bash
+  uv run jupytext --sync <filename>.py
+  ```
+- To sync all mirrors at once:
+  ```bash
+  uv run jupytext --sync *.py
+  ```
 
 ## Runtime/Data Constraints
 - `data/` is required locally and not committed.
