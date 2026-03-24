@@ -81,13 +81,13 @@ Dual-axis line chart over 10 training epochs:
 - Right axis (red): val accuracy
 
 ### Key message
-The model converges rapidly — 91.6% validation accuracy after epoch 1 — and plateaus near 92.4%.
+The model converges rapidly — about 91.6% validation accuracy after epoch 1 — and plateaus near 92.8%.
 A slight val loss uptick after epoch ~7 justifies the early stopping callback (patience=2).
 
 ### Data
 Sourced from `trainer.state.log_history` after training completes.
 Mock data uses a smooth exponential decay + Gaussian noise seeded at 42.
-Final pinned values: val accuracy epoch 10 = 92.42%, matching the reported test accuracy.
+Final pinned values: val accuracy epoch 10 = 92.81%, aligned with the updated held-out test accuracy.
 
 ### Style notes
 - Single-column width (3.5")

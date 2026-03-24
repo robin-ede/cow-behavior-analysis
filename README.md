@@ -13,7 +13,7 @@ This repository implements an end-to-end system for:
 
 ### Key Results
 - **Detection**: YOLOv11 nano model trained on 25K+ cow bounding boxes
-- **Classification**: 92.66% accuracy on 5-class behavior classification
+- **Classification**: 5-fold CV achieved 92.01% accuracy and 92.00% weighted F1 (+/- 0.90%), with 92.81% held-out test accuracy and 92.79% weighted F1
 - **Pipeline**: Real-time video processing with frame-by-frame analysis
 
 ## Repository Structure
@@ -23,6 +23,7 @@ cow-behavior-analysis/
 ├── 01_bbox_crops.ipynb           # Step 1: Extract crops from VIA annotations
 ├── 02_yolo_oneclass_from_via.ipynb  # Step 2: Train YOLO cow detector
 ├── 05_vit_behavior_classifier.ipynb # Step 3: Train ViT behavior classifier
+├── 05b_vit_behavior_classifier_results.ipynb # Step 3b: Review saved classifier results from 05
 ├── 06_cow_detection_and_behavior_pipeline.ipynb # Step 4: End-to-end pipeline
 ├── 06a_botsort_pipeline.ipynb    # Step 4a: Pipeline with tracking
 ├── README.md                     # This file
@@ -43,7 +44,7 @@ cow-behavior-analysis/
 │   │   └── detect/
 │   │       └── yolo_oneclass/   # YOLO training outputs (generated)
 │   ├── figures/
-│   │   └── vit_classifier/      # Evaluation figures (generated)
+│   │   └── vit_classifier/      # Evaluation + CV figures (generated)
 │   ├── pipeline/                # Pipeline demo outputs (generated)
 │   └── pipeline_tracking/       # Tracking demo outputs (generated)
 └── workdir/                      # Intermediate data (gitignored)
@@ -179,17 +180,34 @@ See `requirements.txt` for complete list with version constraints.
 - **Classes**: 5 behaviors with custom label mapping
 
 **Training Strategy**:
-- **Stratified splitting**: Maintains class distribution across train/val/test
+- **Held-out test split**: Keeps 15% of the dataset untouched for final evaluation
+- **5-fold cross-validation**: Runs stratified CV on the remaining 85% for more robust model estimates
 - **Mixed precision**: bf16 on supported hardware, fp16 fallback
 - **Early stopping**: Patience=2 epochs based on weighted F1-score
 - **Optimization**: AdamW with warmup and weight decay
 
 **Key Results**:
-- **Test Accuracy**: 92.66%
-- **Weighted F1-Score**: 92.63%
-- **Training Time**: ~30 minutes on RTX 4080
+- **5-Fold CV Accuracy**: 92.01% +/- 0.90%
+- **5-Fold CV Weighted F1**: 92.00% +/- 0.90%
+- **Held-out Test Accuracy**: 92.81%
+- **Held-out Test Weighted F1**: 92.79%
+- **Training Time**: ~2.5-3 hours total on RTX 4080 for 5-fold CV plus final retraining
 
-**Output**: Production-ready model saved to `artifacts/models/cow-behavior-vit/`
+**Output**: Production-ready model saved to `artifacts/models/cow-behavior-vit/`, plus saved CV/test summaries and figures consumed by `05b_vit_behavior_classifier_results.ipynb`
+
+---
+
+#### 3b. `05b_vit_behavior_classifier_results.ipynb` - Review Saved Classifier Results
+**Purpose**: Load the saved outputs from `05_vit_behavior_classifier.ipynb` and present the completed CV/test results in notebook form.
+
+**Contents**:
+- 5-fold CV summary table and per-fold metrics
+- Held-out test metrics and classification report
+- Saved classifier figures (CV metrics, confusion matrix, precision/recall, sample predictions)
+
+**Input**: Saved outputs under `artifacts/runs/cow-behavior-vit/` and `artifacts/figures/vit_classifier/`
+
+**Output**: Shareable notebook view of the rerun classifier results
 
 ---
 
@@ -219,6 +237,11 @@ See `requirements.txt` for complete list with version constraints.
 **Choice**: Split data by video ID rather than randomly
 **Rationale**: Prevents data leakage since consecutive frames are highly correlated
 **Implementation**: Extract video ID from filename pattern (e.g., `618_00002.jpg` to video `618`)
+
+### 1b. Held-Out Test + Cross-Validation for Classification
+**Choice**: Reserve a fixed test split, then run 5-fold stratified CV on the remaining classifier data
+**Rationale**: Produces a more stable estimate than a single split while preserving one untouched final test set
+**Implementation**: Report fold mean/std for model robustness, then retrain on all non-test crops and evaluate once on held-out test
 
 ### 2. Behavior Priority Mapping
 **Choice**: Hierarchical behavior assignment when multiple behaviors are present
@@ -274,17 +297,19 @@ See `requirements.txt` for complete list with version constraints.
 
 ### ViT Classification Model
 - **Architecture**: ViT-base-patch16-224 (86M parameters)
-- **Training**: 10 epochs with early stopping
-- **Dataset**: 25,324 behavior crops (stratified split)
+- **Training**: 10 epochs with early stopping, plus 5-fold CV on the non-test split
+- **Dataset**: 25,324 behavior crops with a held-out test split and stratified CV on the remaining data
 - **Results**:
   ```
-  Test Accuracy: 92.66%
-  Weighted F1-Score: 92.63%
+  5-Fold CV Accuracy:     92.01% +/- 0.90%
+  5-Fold CV Weighted F1:  92.00% +/- 0.90%
+  Held-out Test Accuracy: 92.81%
+  Held-out Test Weighted F1-Score: 92.79%
   
   Per-class Performance:
-  - drinking water: precision 0.94, recall 0.93, F1 0.93
+  - drinking water: precision 0.95, recall 0.97, F1 0.96
   - foraging:       precision 0.95, recall 0.97, F1 0.96
-  - lying down:     precision 0.90, recall 0.86, F1 0.88
-  - rumination:     precision 0.89, recall 0.90, F1 0.89
+  - lying down:     precision 0.89, recall 0.86, F1 0.87
+  - rumination:     precision 0.89, recall 0.89, F1 0.89
   - stand:          precision 0.96, recall 0.96, F1 0.96
   ```

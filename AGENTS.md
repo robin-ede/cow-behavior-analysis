@@ -8,7 +8,8 @@ All Python-dependent commands must be run via `uv run` to ensure the correct env
 ## Project Layout
 - `01_bbox_crops.*`: crop extraction from VIA CSV
 - `02_yolo_oneclass_from_via.*`: YOLO dataset creation + one-class training
-- `05_vit_behavior_classifier.*`: ViT training + evaluation
+- `05_vit_behavior_classifier.*`: ViT training + evaluation with held-out test + 5-fold CV
+- `05b_vit_behavior_classifier_results.*`: notebook-friendly summary of saved classifier results
 - `06_cow_detection_and_behavior_pipeline.*`: detect + classify inference
 - `06a_botsort_pipeline.*`: tracking-enhanced inference
 - `README.md`: run order and project context
